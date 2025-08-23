@@ -2,25 +2,416 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Comandos do Bot</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: Arial, sans-serif; background: #1e1e1e; color: #fff; text-align: center; }
-        h1 { color: #4caf50; }
-        ul { list-style: none; padding: 0; }
-        li { margin: 10px 0; font-size: 18px; }
-        code { background: #333; padding: 2px 6px; border-radius: 4px; }
+        :root {
+            --primary: #4caf50;
+            --primary-dark: #388e3c;
+            --secondary: #bb86fc;
+            --background: #1e1e1e;
+            --surface: #2d2d2d;
+            --surface-hover: #3d3d3d;
+            --text: #ffffff;
+            --text-secondary: #aaaaaa;
+            --success: #00c853;
+            --warning: #ffab00;
+            --error: #cf6679;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: var(--surface);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        h1 {
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+        
+        .search-box {
+            display: flex;
+            max-width: 500px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .search-box input {
+            flex: 1;
+            padding: 12px 20px;
+            background: transparent;
+            border: none;
+            color: var(--text);
+            font-size: 1rem;
+        }
+        
+        .search-box input::placeholder {
+            color: var(--text-secondary);
+        }
+        
+        .search-box button {
+            padding: 12px 20px;
+            background: var(--primary);
+            border: none;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .search-box button:hover {
+            background: var(--primary-dark);
+        }
+        
+        .commands-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .command-card {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            animation: slideUp 0.5s ease-out;
+            animation-fill-mode: backwards;
+        }
+        
+        .command-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .command-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .command-name {
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .command-desc {
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+        
+        .command-code {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            margin-bottom: 15px;
+        }
+        
+        .copy-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: color 0.3s;
+            padding: 5px;
+        }
+        
+        .copy-btn:hover {
+            color: var(--primary);
+        }
+        
+        .command-category {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            background: rgba(76, 175, 80, 0.2);
+            color: var(--primary);
+        }
+        
+        .category-fun {
+            background: rgba(187, 134, 252, 0.2);
+            color: var(--secondary);
+        }
+        
+        .category-util {
+            background: rgba(255, 171, 0, 0.2);
+            color: var(--warning);
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            padding: 20px;
+        }
+        
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            background: var(--success);
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: transform 0.3s, opacity 0.3s;
+            z-index: 1000;
+        }
+        
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        /* Animações */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .commands-container {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
     </style>
 </head>
 <body>
-    <h1>Comandos do Bot</h1>
-    <ul>
-        <li><code>!ping</code> - Responde pong! 🏓</li>
-        <li><code>!teste</code> - Testa se o bot está funcionando 😎</li>
-        <li><code>!pix</code> - Link para doação via Pix</li>
-        <li><code>!poder</code> - Retorna um poder aleatório</li>
-        <li><code>!piada</code> - Retorna uma piada aleatória</li>
-        <li><code>!hora</code> - Mostra a hora em Brasília</li>
-        <li><code>!lurk</code> - Agradece pelo lurk</li>
-    </ul>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-robot"></i> Comandos do Bot</h1>
+            <p class="subtitle">Lista completa de comandos disponíveis e suas funcionalidades</p>
+            
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Buscar comandos...">
+                <button id="searchBtn"><i class="fas fa-search"></i></button>
+            </div>
+        </header>
+        
+        <div class="commands-container">
+            <div class="command-card" style="animation-delay: 0.1s">
+                <div class="command-header">
+                    <span class="command-name"><i class="fas fa-network-wired"></i> !ping</span>
+                    <span class="command-category">Sistema</span>
+                </div>
+                <p class="command-desc">Verifica a latência do bot e se está respondendo.</p>
+                <div class="command-code">
+                    <code>!ping</code>
+                    <button class="copy-btn" data-command="!ping">
+                        <i class="far fa-copy"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="command-card" style="animation-delay: 0.2s">
+                <div class="command-header">
+                    <span class="command-name"><i class="fas fa-vial"></i> !teste</span>
+                    <span class="command-category">Sistema</span>
+                </div>
+                <p class="command-desc">Testa se o bot está funcionando corretamente.</p>
+                <div class="command-code">
+                    <code>!teste</code>
+                    <button class="copy-btn" data-command="!teste">
+                        <i class="far fa-copy"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="command-card" style="animation-delay: 0.3s">
+                <div class="command-header">
+                    <span class="command-name"><i class="fas fa-donate"></i> !pix</span>
+                    <span class="command-category category-util">Utilidade</span>
+                </div>
+                <p class="command-desc">Exibe o link para doações via PIX para apoiar o bot.</p>
+                <div class="command-code">
+                    <code>!pix</code>
+                    <button class="copy-btn" data-command="!pix">
+                        <i class="far fa-copy"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="command-card" style="animation-delay: 0.4s">
+                <div class="command-header">
+                    <span class="command-name"><i class="fas fa-magic"></i> !poder</span>
+                    <span class="command-category category-fun">Diversão</span>
+                </div>
+                <p class="command-desc">Retorna um poder aleatório, engraçado ou inútil.</p>
+                <div class="command-code">
+                    <code>!poder</code>
+                    <button class="copy-btn" data-command="!poder">
+                        <i class="far fa-copy"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="command-card" style="animation-delay: 0.5s">
+                <div class="command-header">
+                    <span class="command-name"><i class="fas fa-grin-squint-tears"></i> !piada</span>
+                    <span class="command-category category-fun">Diversão</span>
+                </div>
+                <p class="command-desc">Conta uma piada aleatória para alegrar o chat.</p>
+                <div class="command-code">
+                    <code>!piada</code>
+                    <button class="copy-btn" data-command="!piada">
+                        <i class="far fa-copy"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="command-card" style="animation-delay: 0.6s">
+                <div class="command-header">
+                    <span class="command-name"><i class="far fa-clock"></i> !hora</span>
+                    <span class="command-category category-util">Utilidade</span>
+                </div>
+                <p class="command-desc">Mostra a hora atual no fuso horário de Brasília.</p>
+                <div class="command-code">
+                    <code>!hora</code>
+                    <button class="copy-btn" data-command="!hora">
+                        <i class="far fa-copy"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="command-card" style="animation-delay: 0.7s">
+                <div class="command-header">
+                    <span class="command-name"><i class="fas fa-eye"></i> !lurk</span>
+                    <span class="command-category">Social</span>
+                </div>
+                <p class="command-desc">Agradece aos usuários que estão apenas observando o chat.</p>
+                <div class="command-code">
+                    <code>!lurk</code>
+                    <button class="copy-btn" data-command="!lurk">
+                        <i class="far fa-copy"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Bot desenvolvido com <i class="fas fa-heart" style="color: #cf6679;"></i> para a comunidade</p>
+        </div>
+    </div>
+    
+    <div class="notification" id="notification">Comando copiado para a área de transferência!</div>
+    
+    <script>
+        // Funcionalidade de busca
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const commandCards = document.querySelectorAll('.command-card');
+        
+        function filterCommands() {
+            const searchTerm = searchInput.value.toLowerCase();
+            
+            commandCards.forEach(card => {
+                const commandName = card.querySelector('.command-name').textContent.toLowerCase();
+                const commandDesc = card.querySelector('.command-desc').textContent.toLowerCase();
+                
+                if (commandName.includes(searchTerm) || commandDesc.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+        
+        searchInput.addEventListener('input', filterCommands);
+        searchBtn.addEventListener('click', filterCommands);
+        
+        // Funcionalidade de copiar comando
+        const copyButtons = document.querySelectorAll('.copy-btn');
+        const notification = document.getElementById('notification');
+        
+        copyButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const command = button.getAttribute('data-command');
+                navigator.clipboard.writeText(command).then(() => {
+                    // Mostrar notificação
+                    notification.classList.add('show');
+                    
+                    // Esconder notificação após 3 segundos
+                    setTimeout(() => {
+                        notification.classList.remove('show');
+                    }, 3000);
+                });
+            });
+        });
+        
+        // Animar os cards sequencialmente
+        const cards = document.querySelectorAll('.command-card');
+        cards.forEach((card, index) => {
+            card.style.animationDelay = `${0.1 + (index * 0.1)}s`;
+        });
+    </script>
 </body>
 </html>
