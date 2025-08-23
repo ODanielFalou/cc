@@ -1,43 +1,26 @@
-# Simple workflow for deploying static content to GitHub Pages
-name: Deploy static content to Pages
-
-on:
-  # Runs on pushes targeting the default branch
-  push:
-    branches: ["main"]
-
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
-
-jobs:
-  # Single deploy job since we're just deploying
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          # Upload entire repository
-          path: '.'
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Comandos do Bot</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #1e1e1e; color: #fff; text-align: center; }
+        h1 { color: #4caf50; }
+        ul { list-style: none; padding: 0; }
+        li { margin: 10px 0; font-size: 18px; }
+        code { background: #333; padding: 2px 6px; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <h1>Comandos do Bot</h1>
+    <ul>
+        <li><code>!ping</code> - Responde pong! 🏓</li>
+        <li><code>!teste</code> - Testa se o bot está funcionando 😎</li>
+        <li><code>!pix</code> - Link para doação via Pix</li>
+        <li><code>!poder</code> - Retorna um poder aleatório</li>
+        <li><code>!piada</code> - Retorna uma piada aleatória</li>
+        <li><code>!hora</code> - Mostra a hora em Brasília</li>
+        <li><code>!lurk</code> - Agradece pelo lurk</li>
+    </ul>
+</body>
+</html>
